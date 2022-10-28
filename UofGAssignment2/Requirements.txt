@@ -1,0 +1,82 @@
+2022年10月18日 需求分析
+Players类
+1. 用户名
+2. 分数
+3. Board类
+4. takeTurn方法
+
+Square类
+1. 行数
+2. 列数
+3. 船只情况
+     存在舰船：*
+4. 命中情况
+     未射击：-
+     射击未命中：o
+     射击命中：x
+
+Board类
+1. 构造器行列生成图表 10 10
+2. 两个方法
+     2.1 Square填充Board
+     2.2 生成Battleships 随机位置和摆放 不可重叠
+         5条 大小为2
+3. String.format 三格
+
+Battleship类（非继承）
+1. 是否沉没
+2. HP
+3. 大小
+
+main
+1. Player注册
+2. takeTurn逻辑判断情况，返回boolean
+3. 玩家手动输入坐标
+
+Battleship类（继承）
+    每种船的大小必须设置为静态类
+    SmallBattleship 3个 大小为1
+    MediumBattleship 2个 大小为2
+    LargeBattleship 1个 大小为3
+
+2022年10月21日 分类介绍
+Battleship类
+该类作为底层，包含有判断船只是否沉没(Boolean)，大小(Integer)，剩余血量(Integer)
+
+LargeBattleship, MediumBattleship, SmallBattleship类
+该三类作为底层，继承于Battleship类，特别需要注意的是，shipNum(Integer)被赋予了static的属性
+而在向上转型中，使用了super方法，并使用了硬编码调用父类构造器船只是否沉没和船只大小的属性，通过数字
+直接进行了定义。
+
+Square类
+该类作为底层，作用在于定义游戏面板每个成员，方便后面的类中进行调用。
+构造器中包含行号(Integer)，列号(Integer)，是否拥有船只(String)，区域是否被命中(String)，
+区域所属Battleship(Battleship,如有)
+使用toString来规范化输出，具体逻辑为：如果船只存在且区域未被击中，则显示船只情况；区域被命中后，
+则根据具体的需要进行修改。
+使用getter setter方法方便读写修改。
+
+Board类
+该类作为底层，也作为控制区域，作用在于对游戏的面板进行显示和控制
+Board类中，除了具体的属性外，还包括如下方法：
+1. 初始化空面板fillBoard()，该方法将按照Board构造器中的长宽进行初始化，目标实现全是'-'的Board
+2. 创建随机舰船createRandomShip(int shipFinalNumber),该方法旨在随机创建包含Battleship的
+Board，如果区域存在Battleship，则会使用'*'来代表船只。方法中的shipFinalNumber被用来判断船只
+生成情况，如果其为5，则代表生成5条长度为2的船；如果其不为5，则代表其生成包含各种型号船只的情况。
+3. 修改玩家打击Board的方法changeHitBoard(),根据长宽和具体船只情况的表格进行修改，返回具体的Board。
+4. 修改包含己方船只Board的方法changeShipBoard(),根据长宽和具体船只情况的表格进行修改和判断，
+如果出现了命中船只的情况，则向Player类返回被损坏船只的编号，如果没有出现命中，则返回-1。
+5. 向Player类返回Battleship情况的getBattleships()方法
+6. 两条规范化输出的toString()方法
+
+Players类
+该类作为底层，也作为控制区域，作用在于对游戏玩家及其属性进行控制
+Players类中，除了具体的属性外，还包括如下方法：
+1. takeTurn()方法，该方法需要具体的长宽和地方包含船只的棋盘，进行判定，并向main函数返回是否需要
+继续游戏的指令。该方法包含两步，第一步是直接用changeHitBoard()替换用以给玩家显示位置的棋盘；第二步，
+通过changeShipBoard()方法查找船只并返回相应的数据。同时，根据来自Board中的Battleship数组，输出
+Battleship的情况与命中情况。
+2. 规范化输出的toString()方法
+
+Main方法
+该方法用来启动程序，其中包含了位置查重和判断游戏是否结束。
